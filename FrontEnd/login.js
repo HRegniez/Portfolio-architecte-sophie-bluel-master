@@ -10,7 +10,6 @@ form.addEventListener('submit', async (e) => {
     checkLogin(response)
 })
 
-
 async function checkLogin(response) {
     if(response === undefined){
         const errorMessage = document.createElement('p')
@@ -26,7 +25,6 @@ async function checkLogin(response) {
         window.location.href = "./index.html"
     }
 }
-
 
 async function requestLogin(mailInput, passwordInput){
     try {
