@@ -54,7 +54,7 @@ async function modalLoad() {
                 `
                     <div class="modal_options flex">
                         <i class="fa-solid fa-arrows-up-down-left-right zoom_off"></i>
-                        <i class="fa-solid fa-trash-can delete"></i>
+                        <i class="fa-solid fa-trash-can modal_delete"></i>
                     </div>
                     <img class="modal_img" src="${work.imageUrl}" alt="${work.title}">
                     <p class="modal_edit">éditer</p>
@@ -88,7 +88,7 @@ function loadModalOptions(works) {
     const modalImgs = document.querySelectorAll('.modal_img')
     const zoomIcons = document.querySelectorAll('.fa-arrows-up-down-left-right')
     const deleteBtns = document.querySelectorAll('.modal_delete')
-    const editBtns = document.querySelectorAll('modal_edit')
+    const editBtns = document.querySelectorAll('.modal_edit')
 
             // zoom_on icon on hover
     for ( let i = 0; i < modalFigures.length; i++) {
@@ -99,10 +99,11 @@ function loadModalOptions(works) {
             zoomIcons[i].classList.toggle('zoom_off')
         })
             // delete work
-        deleteBtns[i].addEventListener('click', async (e) => {
-            const response = await requestDelete(i)
-            modalLoad()
-        })
+        // deleteBtns[i].addEventListener('click', async (e) => {
+        //     const response = await requestDelete(i)
+        //     modalReset()
+        //     modalLoad()
+        // })
             // edit function
         editBtns[i].addEventListener('click', (e) => {
             return
@@ -144,9 +145,6 @@ async function requestWorks() {
                 headers: {
                     'content-type': 'application/json'
                 },
-                body: JSON.stringify({
-                    
-                })
             })
             if(!req.ok) {
                 throw new Error('login request failed')
