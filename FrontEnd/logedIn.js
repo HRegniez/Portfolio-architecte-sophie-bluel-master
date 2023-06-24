@@ -25,17 +25,24 @@ if(localStorage.userId == 1){
 }
 
 async function modalInit() {
-    console.log(modalPage)
-    const works = await requestWorks()
     modalInitContent()
-    injectWorks(works)
-    loadModalOptions(works)      
+    if(modalPage == 1){
+        const works = await requestWorks()
+        injectWorks(works)
+        optionModalExt()
+        optionModalGalery()  
+    }else if(modalPage == 2){
+        modalInitContent()
+        optionModalExt()
+        optionModalBack()
+    }
+         
 }
 function modalInitContent() {
-    modal.innerHTML= ''
-    modal.classList.remove('modal')// ????
-    modal.classList.add('modal')
+    modal.innerHTML = ''
+    modal.classList = ''
     if(modalPage === 1){
+        modal.classList.add('modal')
         modal.innerHTML = `
             <div class="modal_contain">
                 <i class="fa-solid fa-xmark modal_exit"></i>
@@ -49,17 +56,29 @@ function modalInitContent() {
         `
     modalParent.appendChild(modal)
     }else if(modalPage === 2) {
+        modal.classList.add('modal')
         modal.innerHTML = `
-            <div class="modal_contain">
-                <i class="fa-solid fa-xmark"></i>
-                <i class="fa-solid fa-xmark modal_exit"></i>
-                <h3>Rajouter potos photo</h3>
-                <form action="">
-                    <fieldset class="modal_galerie"></fieldset>
-                    <input class="modal_add" type="submit" value="Ajouter une photo"></input>
-                    <p class="delete_all">suprimer la galerie</p>
-                </form>
-            </div>
+        <div class="modal_contain">
+            <i class="fa-solid fa-arrow-left modal_goback"></i>
+            <i class="fa-solid fa-xmark modal_exit"></i>
+            <h3>Ajout photo</h3>
+            <form class="modal_add-form" action="">
+                <fieldset class="modal_add-img">
+                    <i class="fa-sharp fa-regular fa-image"></i>
+                    <input type="file"
+                        id="add_image" name="add_image"
+                        accept="image/png, image/jpeg">
+                    <label for="add_image">jpg, png: 4mo max</label>
+                </fieldset>
+                <fieldset class="modal_add-details">
+                    <label for="add_titre">Titre</label>
+                    <input name="add_titre" id="add_titre" type="text">
+                    <label for="add_categorie">Categorie</label>
+                    <input name="add_categorie" id="add_categorie" type="text">
+                </fieldset>
+                <input class="modal_add-confirm" type="submit" value="Valider"></input> 
+            </form>
+        </div>
         `
         modalParent.appendChild(modal)
     }
@@ -67,28 +86,26 @@ function modalInitContent() {
 }
 function injectWorks(works) {
     const gallery = document.querySelector('.modal_galerie')
-
     for(work of works) {
         const fig = document.createElement('figure')
         fig.classList.add('modal_figure')
         fig.innerHTML = 
-            `
-                <div class="modal_options flex">
-                    <i class="fa-solid fa-arrows-up-down-left-right zoom_off"></i>
-                    <i class="fa-solid fa-trash-can modal_delete"></i>
-                </div>
-                <img class="modal_img" src="${work.imageUrl}" alt="${work.title}">
-                <p class="modal_edit">éditer</p>
-            
-            `
-        gallery.appendChild(fig)
+        `
+            <div class="modal_options flex">
+                <i class="fa-solid fa-arrows-up-down-left-right zoom_off"></i>
+                <i class="fa-solid fa-trash-can modal_delete"></i>
+            </div>
+            <img class="modal_img" src="${work.imageUrl}" alt="${work.title}">
+            <p class="modal_edit">éditer</p>
+        `
+        gallery.appendChild(fig)    
     }
+    
 }  
-function loadModalOptions(works) {
 
             //////// close modal
+function optionModalExt() {
     const modalExit = document.querySelector('.modal_exit')
-    console.log(works)
     modal.addEventListener('click', (e) => {
         e.stopPropagation()
         if( e.target === modal ) {
@@ -101,8 +118,22 @@ function loadModalOptions(works) {
         e.stopPropagation()
         modalClose()
     })
-
+    if(modalPage == 2) {
+        modalPage = 1
+    }
+}
+function optionModalBack() {
+    const backBtn = document.querySelector('.modal_goback')
+    backBtn.addEventListener('click', (e) => {
+        e.stopPropagation()
+        modalPage = 1
+        modalInit()
+    })
+}
             //////// Works in gallery options ( zoom-icon/delete/edit )
+
+function optionModalGalery() {
+    console.log()
     const modalFigures = document.querySelectorAll('.modal_figure')
     const modalImgs = document.querySelectorAll('.modal_img')
     const zoomIcons = document.querySelectorAll('.fa-arrows-up-down-left-right')
@@ -134,11 +165,8 @@ function loadModalOptions(works) {
         modalPage = 2
         modalInit()
     })
-    
-    
-    // delete all works
-
 }
+////// need to do the delete all option
 function modalClose() {
     modal.classList.remove('modal')
     modal.innerHTML = ''    
