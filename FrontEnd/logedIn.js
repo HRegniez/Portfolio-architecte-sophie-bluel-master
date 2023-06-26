@@ -2,6 +2,7 @@ const logInOut = document.querySelector('#login')
 const modifier = document.getElementById('modifier')
 const modal = document.createElement('div')
 const modalParent = document.getElementById('portfolio')
+const worksArray = []
 var modalPage = 1
                                         // Is logged in ?
 if(localStorage.userId == 1){
@@ -24,8 +25,10 @@ if(localStorage.userId == 1){
 
 async function modalInit() {
     modalInitContent()
+    worksArray = ['']
+    const works = await requestWorks()
     if(modalPage == 1){
-        const works = await requestWorks()
+        
         injectWorks(works)
         modalExt()
         modalGalery()  
@@ -174,16 +177,29 @@ function addWork() {
     const form = document.querySelector('.modal_add-form')
     const imagePreview = document.querySelector('.modal_add-img')
 
-    imgInput.addEventListener('change', (e) => {
+    imgInput.addEventListener('change', () => {
         const img = imgInput.files[0]
-        // if(img) {                            ////// change to image preview ????
-        //     console.log(img)
-        //     const url = img.
+        if(img) {                            
+            console.log(img)
+        //     const url = img.....?        ////// change to image preview ????
         //     imagePreview.innerHTML = 
         //     `
-        //         <img src="${url}" alt="image preview"
+        //         <img src="${url}" alt="image preview" >
         //     `
-        // }
+        }
+    })
+    form.addEventListener('submit', () => {
+        const input = JSON.stringify(
+            `
+                {
+                    "id": 0,
+                    "title": "string",
+                    "imageUrl": "string",
+                    "categoryId": "string",
+                    "userId": 0
+                }
+            `
+        )
     })
 }
 ////// Requests
