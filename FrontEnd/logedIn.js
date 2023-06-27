@@ -2,9 +2,10 @@ const logInOut = document.querySelector('#login')
 const modifier = document.getElementById('modifier')
 const modal = document.createElement('div')
 const modalParent = document.getElementById('portfolio')
-const worksArray = []
+var works
 var modalPage = 1
                                         // Is logged in ?
+
 if(localStorage.userId == 1){
     logInOut.innerHTML = 'logout'
     logInOut.addEventListener('click', () => {
@@ -16,7 +17,8 @@ if(localStorage.userId == 1){
     <i class="fa-regular fa-pen-to-square edit"></i>
     <p>modifier<p>
     `
-    modifier.addEventListener('click', () => {      // modal launch event listener 
+    modifier.addEventListener('click', async () => {      // modal launch event listener 
+        works = await requestWorks()
         modalInit()  
     }) 
 }else{
@@ -25,12 +27,10 @@ if(localStorage.userId == 1){
 
 async function modalInit() {
     modalInitContent()
-    worksArray = ['']
-    const works = await requestWorks()
+    
     if(modalPage == 1){
-        
-        injectWorks(works)
         modalExt()
+        injectWorks()
         modalGalery()  
     }else if(modalPage == 2){
         modalExt()
@@ -86,7 +86,7 @@ function modalInitContent() {
     }
     
 }
-function injectWorks(works) {
+function injectWorks() {
     const gallery = document.querySelector('.modal_galerie')
     for(work of works) {
         const fig = document.createElement('figure')
@@ -150,6 +150,7 @@ function modalGalery() {
                 // delete work
         deleteBtns[i].addEventListener('click', async (e) => {
             const response = await requestDelete(i)          //// !!! API request, body ? 
+            works.splice([i], 1)
             modalInit()
         })
                 // edit function
@@ -170,7 +171,7 @@ function modalClose() {
     modal.classList.remove('modal')
     modal.innerHTML = ''    
 }
-function addWork() {
+function addWork(works) {
     const imgInput = document.querySelector('#add_image')
     const titleInput = document.querySelector('#add_titre')
     const catInput = document.querySelector('#add_categorie')
@@ -181,7 +182,7 @@ function addWork() {
         const img = imgInput.files[0]
         if(img) {                            
             console.log(img)
-        //     const url = img.....?        ////// change to image preview ????
+            const url = img       ////// change to image preview ????
         //     imagePreview.innerHTML = 
         //     `
         //         <img src="${url}" alt="image preview" >
@@ -189,19 +190,32 @@ function addWork() {
         }
     })
     form.addEventListener('submit', () => {
-        const input = JSON.stringify(
-            `
-                {
-                    "id": 0,
-                    "title": "string",
-                    "imageUrl": "string",
-                    "categoryId": "string",
-                    "userId": 0
-                }
-            `
-        )
+        const newWork = new Work()
+        works.push(JSON.stringify(newWork))
+        modalPage = 1
+        modalInit()
+        // const input = JSON.stringify(
+        //     `
+        //         {
+        //             "id": 0,
+        //             "title": "string",
+        //             "imageUrl": "string",
+        //             "categoryId": "string",
+        //             "userId": 0
+        //         }
+        //     `
+        // )
     })
+    class Work {
+        constructor(title, imageUrl, categoryId) {
+            this.id = works.length
+            this.title = title
+            this.imageUrl = imageUrl
+            this.categoryId = categoryId
+        }
+    }
 }
+
 ////// Requests
 async function requestWorks() {
     try {
@@ -223,7 +237,7 @@ async function requestDelete(i){
                 'content-type': 'application/json'
             },
             body: JSON.stringify({
-                userId: localStorage[0],
+                // userId: localStorage[0]
                 token: localStorage[1]
             })
         })
