@@ -48,10 +48,10 @@ function modalInitContent() {
             <div class="modal_contain">
                 <i class="fa-solid fa-xmark modal_exit"></i>
                 <h3>Galerie photo</h3>
-                <form action="">
+                <form action="post">
                     <fieldset class="modal_galerie"></fieldset>
                     <input class="modal_add" type="submit" value="Ajouter une photo"></input>
-                    <p class="delete_all">suprimer la galerie</p>
+                    <p class="delete_all">supprimer la galerie</p>
                 </form>
             </div>
         `
@@ -66,11 +66,10 @@ function modalInitContent() {
                 <h3>Ajout photo</h3>
                 <form class="modal_add-form" method="post" action="push">
                     <fieldset class="modal_add-img">
-                        <i class="fa-sharp fa-regular fa-image"></i>
-                        <input type="file"
-                            id="add_image" name="add_image"
-                            accept="image/png, image/jpeg">
-                        <label for="add_image">jpg, png: 4mo max</label>
+                        <img class="modal_add-icon" src="./assets/icons/iconImg.png" alt="icon d'une image" >
+                        <input type="file" id="add_image" class="add_img hidden" accept="image/png, image/jpeg">
+                        <label id="add_img-label" for="add_img">+ Ajouter photo</label>
+                        <span class="add_image-span">jpg, png: 4mo max</span>
                     </fieldset>
                     <fieldset class="modal_add-details">
                         <label for="add_titre">Titre</label>
@@ -149,7 +148,7 @@ function modalGalery() {
         })
                 // delete work
         deleteBtns[i].addEventListener('click', async (e) => {
-            const response = await requestDelete(i)          //// !!! API request, body ? 
+            requestDelete(i)          //// !!! API request, body ? 
             works.splice([i], 1)
             modalInit()
         })
@@ -180,9 +179,8 @@ function addWork(works) {
 
     imgInput.addEventListener('change', () => {
         if(imgInput.files && imgInput.files[0]) {
-            
+            var img = new Image()
             const reader = new FileReader()
-            console.log(reader)
             reader.addEventListener('load', () => {
                 console.log('here')
                 var img = new Image()
@@ -193,10 +191,12 @@ function addWork(works) {
                 `
             })
             reader.readAsDataURL(imgInput.files[0])
+            return img
         }
     form.addEventListener('submit', () => {
-        const newWork = new Work(titleInput, url, catInput)
+        const newWork = new Work(titleInput, img.src, catInput)
         works.push(JSON.stringify(newWork))
+        requestAddWork(newWork)
         modalPage = 1
         modalInit()
         // const input = JSON.stringify(
@@ -219,7 +219,7 @@ function addWork(works) {
             this.categoryId = categoryId
         }
     }
-})
+})}
 ////// Requests
 async function requestWorks() {
     try {
@@ -233,17 +233,33 @@ async function requestWorks() {
         console.error('error', error)
     } 
 }   
-async function requestDelete(i){
+async function requestDelete(i) {
     try {
         const req = await fetch(`'http://localhost:5678/api/works/${i}'`, {
             method: 'delete',
             headers: {
+                'Authorization': 'Token ' + localStorage[1],
+                'content-type': 'application/json'
+            }
+        })
+        if(!req.ok) {
+            throw new Error('login request failed')
+        }
+        resp = await req.json()    
+        return resp
+    } catch (error) {
+        console.error(error)
+    }   
+}
+async function requestAddWork(newWork) {
+    try {
+        const req = await fetch(`'http://localhost:5678/api/works'`, {
+            method: 'post',
+            headers: {
+                'Authorization': 'Token ' + localStorage.getItem("token"),
                 'content-type': 'application/json'
             },
-            body: JSON.stringify({
-                // userId: localStorage[0]
-                token: localStorage[1]
-            })
+            body: JSON.stringify({newWork})
         })
         if(!req.ok) {
             throw new Error('login request failed')

@@ -258,7 +258,7 @@ footer nav ul {
 .modal {
 	position: absolute;
 	z-index: 1;
-	height: 100%;
+	height: 2555px;
 	width: 100%;
 	top: 0;
 	right: 0;
@@ -266,19 +266,16 @@ footer nav ul {
 	bottom: 0;
 	background-color: #00000052;
 	display: flex;
+	align-items: baseline;
 	justify-content: center;
-	align-items: center;
+	padding-top: 10rem;
 }
 .modal_contain {
 	background-color: white;
 	opacity: 100%;
 	padding: 1rem;
 	position: relative;
-	width: 35rem;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	margin-top: 18rem;
+	width: 27rem;
 	border-radius: 0.5rem;
 }
 .modal_contain .modal_exit {
@@ -330,15 +327,28 @@ footer nav ul {
 	cursor: pointer;
 }
 .modal_galerie {
-	width: 33rem;
+	width: 80%;
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
 	gap: 1rem;
+	padding-bottom: 2rem;
+    border-bottom: 1px solid #B3B3B3;
+}
+.modal_add {
+	cursor: pointer;
 }
 .modal_add-img {
-	height: 12rem;
-	background-color: rgb(226, 239, 244);
+	width: 70%;
+    background-color: #E8F1F6;
 }
-.modal_add-img i {
-	text-align: center;
+.modal_add-icon {
+	width: 20%;
+    margin: 1rem auto;
+}
+.modal_edit {
+	cursor: pointer;
+}
+
+.hidden {
+	display: none;
 }
