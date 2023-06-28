@@ -179,18 +179,23 @@ function addWork(works) {
     const imagePreview = document.querySelector('.modal_add-img')
 
     imgInput.addEventListener('change', () => {
-        const img = imgInput.files[0]
-        if(img) {                            
-            console.log(img)
-            const url = img       ////// change to image preview ????
-        //     imagePreview.innerHTML = 
-        //     `
-        //         <img src="${url}" alt="image preview" >
-        //     `
+        if(imgInput.files && imgInput.files[0]) {
+            
+            const reader = new FileReader()
+            console.log(reader)
+            reader.addEventListener('load', () => {
+                console.log('here')
+                var img = new Image()
+                img.src = reader.result
+                imagePreview.innerHTML = 
+                `
+                    <img src="${img.src}" alt="image preview" >
+                `
+            })
+            reader.readAsDataURL(imgInput.files[0])
         }
-    })
     form.addEventListener('submit', () => {
-        const newWork = new Work()
+        const newWork = new Work(titleInput, url, catInput)
         works.push(JSON.stringify(newWork))
         modalPage = 1
         modalInit()
@@ -214,8 +219,7 @@ function addWork(works) {
             this.categoryId = categoryId
         }
     }
-}
-
+})
 ////// Requests
 async function requestWorks() {
     try {
