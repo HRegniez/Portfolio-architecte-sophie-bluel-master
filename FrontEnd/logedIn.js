@@ -67,15 +67,21 @@ function modalInitContent() {
                 <form class="modal_add-form" method="post" action="push">
                     <fieldset class="modal_add-img">
                         <img class="modal_add-icon" src="./assets/icons/iconImg.png" alt="icon d'une image" >
-                        <input type="file" id="add_image" class="add_img hidden" accept="image/png, image/jpeg">
-                        <label id="add_img-label" for="add_img">+ Ajouter photo</label>
+                        <!-- <label id="add_img-label" for="add_img"> -->
+                            <input type="file" id="add_image" class="add_img " accept="image/png, image/jpeg">
+                            <!-- + Ajouter photo
+                        </label> -->
                         <span class="add_image-span">jpg, png: 4mo max</span>
                     </fieldset>
                     <fieldset class="modal_add-details">
                         <label for="add_titre">Titre</label>
                         <input name="add_titre" id="add_titre" type="text">
-                        <label for="add_categorie">Categorie</label>
-                        <input name="add_categorie" id="add_categorie" type="text">
+                        <label for="add_categorie">Catégorie</label>
+                        <select name="add_categorie" id="add_categorie" type="text">
+                            <option value="1">Objets</option>
+                            <option value="2">Appartements</option>
+                            <option value="3">Hotel & restaurants</option>
+                        </select>
                     </fieldset>
                     <input class="modal_add-confirm" type="submit" value="Valider"></input> 
                 </form>
@@ -187,7 +193,7 @@ function addWork(works) {
                 img.src = reader.result
                 imagePreview.innerHTML = 
                 `
-                    <img src="${img.src}" alt="image preview" >
+                    <img class="preview_img" src="${img.src}" alt="image preview" >
                 `
             })
             reader.readAsDataURL(imgInput.files[0])

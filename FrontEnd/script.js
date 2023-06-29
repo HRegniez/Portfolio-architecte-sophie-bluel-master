@@ -3,14 +3,14 @@ init()
 async function init() {
     const works = await requestWorks()
     const gallery = document.querySelector('.gallery')
-    const counter = { value: 0 }
-    loadPage(works, gallery, counter)
-    loadCategories(works, gallery, counter)
+    const categoryIndex = { value: 0 }
+    loadPage(works, gallery, categoryIndex)
+    loadCategories(works, gallery, categoryIndex)
 }
 
-async function loadPage(works, gallery, counter) {            // Load main page content
+async function loadPage(works, gallery, categoryIndex) {            // Load main page content
     gallery.innerHTML = ''
-    if(counter.value === 0) {
+    if(categoryIndex.value === 0) {
         for (work of works) {
             const fig = document.createElement('figure')
             fig.innerHTML = 
@@ -22,7 +22,7 @@ async function loadPage(works, gallery, counter) {            // Load main page 
         }
     } else {
         const worksFilter = works.filter((work) => { 
-            return work.categoryId === counter.value
+            return work.categoryId === categoryIndex.value
         }) 
         for (workFiltered of worksFilter) {
             const fig = document.createElement("figure")
@@ -36,7 +36,7 @@ async function loadPage(works, gallery, counter) {            // Load main page 
     }
 }
 
-async function loadCategories(works, gallery, counter) {
+async function loadCategories(works, gallery, categoryIndex) {
     const categories = await requestCategories()
     categories.unshift({id : 0, name : 'Tout'})
     const filtersContain = document.querySelector('.filters')
@@ -44,12 +44,12 @@ async function loadCategories(works, gallery, counter) {
         const filter = document.createElement('li')
         filter.innerHTML = 
         `
-            <li class="filter" data-set="${categorie.id}"> ${categorie.name} </li>
+            <a class="filter" data-set="${categorie.id}"> ${categorie.name} </a>
         `
         filtersContain.appendChild(filter)
         filter.addEventListener('click', e => {
-            counter.value = categorie.id
-            loadPage(works, gallery, counter)
+            categoryIndex.value = categorie.id
+            loadPage(works, gallery, categoryIndex)
         })
     }
 }
