@@ -115,11 +115,9 @@ li:hover {
 	margin: auto;
 	width: 80%;
 }
-
 #introduction article {
 	flex: 1
 }
-
 #introduction p {
 	margin-bottom: 0.5em;
 }
