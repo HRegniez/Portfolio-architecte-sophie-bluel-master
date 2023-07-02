@@ -2,8 +2,9 @@ const logInOut = document.querySelector('#login')
 const modifier = document.getElementById('modifier')
 const modal = document.createElement('div')
 const modalParent = document.getElementById('portfolio')
-var works
-var modalPage = 1
+
+let works
+let modalPage = 1
                                         // Is logged in ?
 
 if(localStorage.userId == 1){
@@ -23,6 +24,7 @@ if(localStorage.userId == 1){
     }) 
 }else{
     logInOut.innerHTML = ' <a href="./login.html">login</a>'
+
 }
 
 async function modalInit() {
@@ -102,7 +104,7 @@ function injectWorks() {
                 <i class="fa-solid fa-arrows-up-down-left-right zoom_off"></i>
                 <i class="fa-solid fa-trash-can modal_delete"></i>
             </div>
-            <img class="modal_img" src="${work.imageUrl}" alt="${work.title}">
+            <img class="modal_img" src="${work.imageUrl}" data-id="${work.id}" alt="${work.title}">
             <p class="modal_edit">éditer</p>
         `
         gallery.appendChild(fig)    
@@ -153,13 +155,17 @@ function modalGalery() {
             zoomIcons[i].classList.toggle('zoom_off')
         })
                 // delete work
-        deleteBtns[i].addEventListener('click', async (e) => {
-            requestDelete(i)          //// !!! API request, body ? 
-            works.splice([i], 1)
+        deleteBtns[i].addEventListener('click', async () => {
+            const deleteWorks = document.querySelectorAll(`[data-id="${works[i].id}"]`)
+            for (deleteWork of deleteWorks) {
+                deleteWork.remove()
+            }
+            requestDelete(i)
+            works.splice(i, 1)
             modalInit()
         })
                 // edit function
-        editBtns[i].addEventListener('click', (e) => {
+        editBtns[i].addEventListener('click', () => {
             return
         })
     }
@@ -171,7 +177,7 @@ function modalGalery() {
     })
 }
 
-////// need to do the delete all option
+////// ?? need to do the delete all option ??
 function modalClose() {
     modal.classList.remove('modal')
     modal.innerHTML = ''    
@@ -185,11 +191,10 @@ function addWork(works) {
 
     imgInput.addEventListener('change', () => {
         if(imgInput.files && imgInput.files[0]) {
-            var img = new Image()
+            let img = new Image()
             const reader = new FileReader()
             reader.addEventListener('load', () => {
                 console.log('here')
-                var img = new Image()
                 img.src = reader.result
                 imagePreview.innerHTML = 
                 `
@@ -233,26 +238,25 @@ async function requestWorks() {
         if (!response.ok) {
             throw new Error('works request failed')
         }
-        const works = await response.json()
-        return works
+        works = await response.json()
+        return works                                // ?? do i need to create a const or replace existing variable ??
     } catch (error) {
         console.error('error', error)
     } 
 }   
 async function requestDelete(i) {
     try {
-        const req = await fetch(`'http://localhost:5678/api/works/${i}'`, {
+        const req = await fetch(`http://localhost:5678/api/works/${works[i].id}`, {
             method: 'delete',
             headers: {
-                'Authorization': 'Token ' + localStorage[1],
+                'Authorization': `Bearer ${localStorage.getItem("token")}`,
                 'content-type': 'application/json'
             }
         })
         if(!req.ok) {
             throw new Error('login request failed')
         }
-        resp = await req.json()    
-        return resp
+        return await req.json()
     } catch (error) {
         console.error(error)
     }   
@@ -270,8 +274,7 @@ async function requestAddWork(newWork) {
         if(!req.ok) {
             throw new Error('login request failed')
         }
-        resp = await req.json()    
-        return resp
+        return await req.json()
     } catch (error) {
         console.error(error)
     }   

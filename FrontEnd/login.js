@@ -34,9 +34,10 @@ async function requestLogin(mailInput, passwordInput){
                 'content-type': 'application/json'
             },
             body: JSON.stringify({
-                email: mailInput.value,
-                password: passwordInput.value
+                'email': mailInput.value,
+                'password': passwordInput.value
             })
+            
         })
         if(!req.ok) {
             throw new Error('login request failed')

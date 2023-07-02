@@ -13,6 +13,8 @@ async function loadPage(works, gallery, categoryIndex) {            // Load main
     if(categoryIndex.value === 0) {
         for (work of works) {
             const fig = document.createElement('figure')
+            // Sur ta figure, tu dois lui ajouter un data-id avec l'id de l'image (work.id)
+            fig.dataset.id = work.id
             fig.innerHTML = 
                 `
                 <img src="${work.imageUrl}" alt="${work.title}">
@@ -37,21 +39,26 @@ async function loadPage(works, gallery, categoryIndex) {            // Load main
 }
 
 async function loadCategories(works, gallery, categoryIndex) {
-    const categories = await requestCategories()
-    categories.unshift({id : 0, name : 'Tout'})
-    const filtersContain = document.querySelector('.filters')
-    for (const categorie of categories) {
-        const filter = document.createElement('li')
-        filter.innerHTML = 
-        `
-            <a class="filter" data-set="${categorie.id}"> ${categorie.name} </a>
-        `
-        filtersContain.appendChild(filter)
-        filter.addEventListener('click', e => {
-            categoryIndex.value = categorie.id
-            loadPage(works, gallery, categoryIndex)
-        })
-    }
+    if(!localStorage.userId == 1){
+        const categories = await requestCategories()
+        categories.unshift({id : 0, name : 'Tout'})
+
+        const navFilters = document.querySelector('.nav_filters')
+        const filtersContain = document.createElement('ul')
+        filtersContain.classList.add('filters')
+        navFilters.appendChild(filtersContain)
+        for (const categorie of categories) {
+            const filter = document.createElement('li')
+            filter.innerHTML = 
+            `
+                <a class="filter" data-set="${categorie.id}"> ${categorie.name} </a>
+            `
+            filtersContain.appendChild(filter)
+            filter.addEventListener('click', e => {
+                categoryIndex.value = categorie.id
+                loadPage(works, gallery, categoryIndex)
+            })    
+    }}
 }
 
 ///////////////////////////////////////// Requests
