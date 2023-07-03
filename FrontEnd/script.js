@@ -6,6 +6,7 @@ async function init() {
     const categoryIndex = { value: 0 }
     loadPage(works, gallery, categoryIndex)
     loadCategories(works, gallery, categoryIndex)
+    logOut()
 }
 
 async function loadPage(works, gallery, categoryIndex) {            // Load main page content
@@ -39,11 +40,10 @@ async function loadPage(works, gallery, categoryIndex) {            // Load main
 }
 
 async function loadCategories(works, gallery, categoryIndex) {
+    const navFilters = document.querySelector('.nav_filters')
     if(!localStorage.userId == 1){
         const categories = await requestCategories()
         categories.unshift({id : 0, name : 'Tout'})
-
-        const navFilters = document.querySelector('.nav_filters')
         const filtersContain = document.createElement('ul')
         filtersContain.classList.add('filters')
         navFilters.appendChild(filtersContain)
@@ -58,9 +58,19 @@ async function loadCategories(works, gallery, categoryIndex) {
                 categoryIndex.value = categorie.id
                 loadPage(works, gallery, categoryIndex)
             })    
-    }}
+    }}else{
+        navFilters.innerHTML = ''
+    }
 }
 
+function logOut() {
+    const btn = document.querySelector('#login')
+    btn.addEventListener('click', () => {
+        window.localStorage.clear()
+        btn.innerHTML = ' <a href="./login.html">login</a>'
+        loadCategories()
+    })
+}
 ///////////////////////////////////////// Requests
 async function requestWorks() {
     try {

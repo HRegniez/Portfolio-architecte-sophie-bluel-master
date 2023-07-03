@@ -12,7 +12,7 @@ if(localStorage.userId == 1){
     logInOut.innerHTML = 'logout'
     logInOut.addEventListener('click', () => {
         window.localStorage.clear()
-        logInOut.innerHTML = ' <a href="./login.html">login</a>'
+        // logInOut.innerHTML = ' <a href="./login.html">login</a>'
         modifier.innerHTML = ''
     })
     modifier.innerHTML = `
@@ -25,10 +25,10 @@ if(localStorage.userId == 1){
         console.log(categories)
         modalInit()  
     }) 
-}else{
-    logInOut.innerHTML = ' <a href="./login.html">login</a>'
-
-}
+} // else{
+//     logInOut.innerHTML = ' <a href="./login.html">login</a>'
+    
+// }
 
 async function modalInit() {
     modalInitContent()
