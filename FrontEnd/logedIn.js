@@ -215,13 +215,13 @@ function addWork(works) {
             return img
         }
     form.addEventListener('submit', (e) => {
-        e.preventDefault()
-        const newWork = new Work(titleInput, img.src, catInput.dataset.id)
-        works.push(JSON.stringify(newWork))
-        console.log(newWork)
-        requestAddWork(newWork)
-        modalPage = 1
-        modalInit()
+        // e.preventDefault()
+        // const newWork = new Work(titleInput, img.src, catInput.dataset.id)
+        // works.push(JSON.stringify(newWork))
+        // console.log(newWork)
+        // requestAddWork(newWork)
+        // modalPage = 1
+        // modalInit()
     })
     class Work {
         constructor(title, imageUrl, categoryId) {
