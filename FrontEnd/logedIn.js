@@ -69,7 +69,7 @@ function modalInitContent() {
                 <i class="fa-solid fa-arrow-left modal_goback"></i>
                 <i class="fa-solid fa-xmark modal_exit"></i>
                 <h3>Ajout photo</h3>
-                <form class="modal_add-form" method="post" >
+                <form class="modal_add-form" >
                     <fieldset class="modal_add-img">
                         <img class="modal_add-icon" src="./assets/icons/iconImg.png" alt="icon d'une image" >
                         <!-- <label id="add_img-label" for="add_img"> -->
