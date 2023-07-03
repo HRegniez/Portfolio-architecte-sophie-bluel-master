@@ -86,7 +86,7 @@ function modalInitContent() {
                             
                         </select>
                     </fieldset>
-                    <input class="modal_add-confirm" type="button" value="Valider"></input> 
+                    <input class="modal_add-confirm" type="submit" value="Valider"></input> 
                 </form>
             </div>
         `
@@ -216,30 +216,19 @@ function addWork(works) {
         }
     form.addEventListener('submit', (e) => {
         e.preventDefault()
-        const newWork = new Work(titleInput, img.src, catInput)
+        const newWork = new Work(titleInput, img.src, catInput.dataset.id)
         works.push(JSON.stringify(newWork))
         console.log(newWork)
         requestAddWork(newWork)
         modalPage = 1
         modalInit()
-        // const input = JSON.stringify(
-        //     `
-        //         {
-        //             "id": 0,
-        //             "title": "string",
-        //             "imageUrl": "string",
-        //             "categoryId": "string",
-        //             "userId": 0
-        //         }
-        //     `
-        // )
     })
     class Work {
         constructor(title, imageUrl, categoryId) {
             this.id = works.length
             this.title = title
             this.imageUrl = imageUrl
-            this.categoryId = categoryId.dataset.id
+            this.categoryId = categoryId
             this.userId = localStorage.getItem('userId')
         }
     }
