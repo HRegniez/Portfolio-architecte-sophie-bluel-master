@@ -5,6 +5,7 @@ const modalParent = document.getElementById('portfolio')
 
 let works
 let modalPage = 1
+let categories
                                         // Is logged in ?
 
 if(localStorage.userId == 1){
@@ -20,6 +21,8 @@ if(localStorage.userId == 1){
     `
     modifier.addEventListener('click', async () => {      // modal launch event listener 
         works = await requestWorks()
+        categories = await requestCategories()
+        console.log(categories)
         modalInit()  
     }) 
 }else{
@@ -66,7 +69,7 @@ function modalInitContent() {
                 <i class="fa-solid fa-arrow-left modal_goback"></i>
                 <i class="fa-solid fa-xmark modal_exit"></i>
                 <h3>Ajout photo</h3>
-                <form class="modal_add-form" method="post" action="push">
+                <form class="modal_add-form" method="post" >
                     <fieldset class="modal_add-img">
                         <img class="modal_add-icon" src="./assets/icons/iconImg.png" alt="icon d'une image" >
                         <!-- <label id="add_img-label" for="add_img"> -->
@@ -80,19 +83,27 @@ function modalInitContent() {
                         <input name="add_titre" id="add_titre" type="text">
                         <label for="add_categorie">Catégorie</label>
                         <select name="add_categorie" id="add_categorie" type="text">
-                            <option value="1">Objets</option>
-                            <option value="2">Appartements</option>
-                            <option value="3">Hotel & restaurants</option>
+                            
                         </select>
                     </fieldset>
-                    <input class="modal_add-confirm" type="submit" value="Valider"></input> 
+                    <input class="modal_add-confirm" type="button" value="Valider"></input> 
                 </form>
             </div>
         `
+        loadCats()
         modalParent.appendChild(modal)
     }
     
 }
+function loadCats() {
+            const catSelect = document.querySelector('#add_categorie')
+            for(cat of categories) {
+                const categorie = document.createElement('option')
+                categorie.dataset.id = cat.id
+                categorie.innerText = cat.name
+                catSelect.appendChild(categorie)
+            }
+        }
 function injectWorks() {
     const gallery = document.querySelector('.modal_galerie')
     for(work of works) {
@@ -188,7 +199,6 @@ function addWork(works) {
     const catInput = document.querySelector('#add_categorie')
     const form = document.querySelector('.modal_add-form')
     const imagePreview = document.querySelector('.modal_add-img')
-
     imgInput.addEventListener('change', () => {
         if(imgInput.files && imgInput.files[0]) {
             let img = new Image()
@@ -204,9 +214,11 @@ function addWork(works) {
             reader.readAsDataURL(imgInput.files[0])
             return img
         }
-    form.addEventListener('submit', () => {
+    form.addEventListener('submit', (e) => {
+        e.preventDefault()
         const newWork = new Work(titleInput, img.src, catInput)
         works.push(JSON.stringify(newWork))
+        console.log(newWork)
         requestAddWork(newWork)
         modalPage = 1
         modalInit()
@@ -227,7 +239,8 @@ function addWork(works) {
             this.id = works.length
             this.title = title
             this.imageUrl = imageUrl
-            this.categoryId = categoryId
+            this.categoryId = categoryId.dataset.id
+            this.userId = localStorage.getItem('userId')
         }
     }
 })}
@@ -266,7 +279,7 @@ async function requestAddWork(newWork) {
         const req = await fetch(`'http://localhost:5678/api/works'`, {
             method: 'post',
             headers: {
-                'Authorization': 'Token ' + localStorage.getItem("token"),
+                'Authorization': `Bearer ${localStorage.getItem("token")}`,
                 'content-type': 'application/json'
             },
             body: JSON.stringify({newWork})
@@ -278,4 +291,16 @@ async function requestAddWork(newWork) {
     } catch (error) {
         console.error(error)
     }   
+}
+async function requestCategories() {
+    try {
+        const response = await fetch('http://localhost:5678/api/categories')
+        if (!response.ok) {
+            throw new Error('categories request failed')
+        }
+        const categories = await response.json()
+        return categories
+    } catch (error) {
+        console.error('error', error)
+    } 
 }
