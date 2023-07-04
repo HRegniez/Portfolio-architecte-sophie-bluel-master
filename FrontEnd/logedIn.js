@@ -69,25 +69,27 @@ function modalInitContent() {
                 <i class="fa-solid fa-arrow-left modal_goback"></i>
                 <i class="fa-solid fa-xmark modal_exit"></i>
                 <h3>Ajout photo</h3>
-                <form class="modal_add-form" >
+                <div class="modal_add-form" >
                     <fieldset class="modal_add-img">
                         <img class="modal_add-icon" src="./assets/icons/iconImg.png" alt="icon d'une image" >
-                        <!-- <label id="add_img-label" for="add_img"> -->
-                            <input type="file" id="add_image" class="add_img " accept="image/png, image/jpeg">
-                            <!-- + Ajouter photo
-                        </label> -->
+                        <label id="add_img-label" for="add_image">
+                            + Ajouter photo
+                        </label>
+                        <input type="file" id="add_image" class="add_img " accept="image/png, image/jpeg">
                         <span class="add_image-span">jpg, png: 4mo max</span>
                     </fieldset>
                     <fieldset class="modal_add-details">
                         <label for="add_titre">Titre</label>
-                        <input name="add_titre" id="add_titre" type="text">
+                        <input  class="add_input" name="add_titre" id="add_titre" type="text">
                         <label for="add_categorie">Catégorie</label>
-                        <select name="add_categorie" id="add_categorie" type="text">
-                            
-                        </select>
+                        <div class="add_categorie-wrap">
+                            <select class="add_input"  name="add_categorie" id="add_categorie" type="text">
+                            </select>
+                            <img src="./assets/icons/arrow-down.svg" >
+                        </div>
                     </fieldset>
                     <input class="modal_add-confirm" type="submit" value="Valider"></input> 
-                </form>
+                </div>
             </div>
         `
         loadCats()

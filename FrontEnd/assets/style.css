@@ -365,3 +365,49 @@ footer nav ul {
 	margin: 1rem auto 0.5rem;
 	width: 100%;
 }
+.modal_add-form input[type="file"] {
+	display: none;
+}
+#add_img-label {
+	display: block;
+    font-weight: 500;
+	font-size: 14px;
+    color: white;
+    border-radius: 50px;
+	background: #CBD6DC;
+    margin: 0 auto 0.5rem;
+	padding: 0.5rem 2rem;
+    text-align: center;
+    border-radius: 60px;
+	color: #306685;
+}
+.modal_add-form span {
+	display: block;
+	margin: 0 auto 0.5rem;
+	font-size: 11px;
+	font-weight: 400;
+}
+.modal_add-details .add_input {
+	height: 32px;
+	background: #FFF;
+	box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.11);
+	border: none;
+	width: 100%;
+}
+#add_categorie {
+	height: 38px;	
+	-webkit-appearance: none;
+    -moz-appearance: none;
+	appearance: none;
+	padding: 0 0.5rem;
+}
+.add_categorie-wrap {
+	width: 100%;
+	position: relative;
+}
+.add_categorie-wrap img {
+	display: block;
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+}
