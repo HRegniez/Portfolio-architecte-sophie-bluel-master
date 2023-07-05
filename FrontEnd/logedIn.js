@@ -88,7 +88,7 @@ function modalInitContent() {
                             <img src="./assets/icons/arrow-down.svg" >
                         </div>
                     </fieldset>
-                    <input class="modal_add-confirm" type="submit" value="Valider"></input> 
+                    <button class="modal_add-confirm">Confirmer</button> 
                 </div>
             </div>
         `
@@ -173,7 +173,7 @@ function modalGalery() {
             for (deleteWork of deleteWorks) {
                 deleteWork.remove()
             }
-            requestDelete(i)
+            // requestDelete(i)
             works.splice(i, 1)
             modalInit()
         })
@@ -195,46 +195,52 @@ function modalClose() {
     modal.classList.remove('modal')
     modal.innerHTML = ''    
 }
-function addWork(works) {
+function addWork() {
     const imgInput = document.querySelector('#add_image')
     const titleInput = document.querySelector('#add_titre')
     const catInput = document.querySelector('#add_categorie')
-    const form = document.querySelector('.modal_add-form')
+    const formBtn = document.querySelector('.modal_add-confirm')
     const imagePreview = document.querySelector('.modal_add-img')
+    let img
     imgInput.addEventListener('change', () => {
+        
         if(imgInput.files && imgInput.files[0]) {
-            let img = new Image()
+            img = new Image()
             const reader = new FileReader()
             reader.addEventListener('load', () => {
-                console.log('here')
                 img.src = reader.result
+                console.log(img.src)
                 imagePreview.innerHTML = 
                 `
                     <img class="preview_img" src="${img.src}" alt="image preview" >
                 `
+
             })
             reader.readAsDataURL(imgInput.files[0])
-            return img
-        }
-    form.addEventListener('submit', (e) => {
+            }
+        
+        })
+    
+    formBtn.addEventListener('click', (e) => {
+        console.log('click')
         e.preventDefault()
-        // const newWork = new Work(titleInput, img.src, catInput.dataset.id)
-        // works.push(JSON.stringify(newWork))
-        // console.log(newWork)
-        // requestAddWork(newWork)
-        // modalPage = 1
-        // modalInit()
+        const newWork = new Work(works.length, titleInput, img.src, catInput.dataset.id)
+        works.push(JSON.stringify(newWork))
+        console.log(newWork)
+        requestAddWork(newWork)
+        modalPage = 1
+        modalInit()
     })
     class Work {
-        constructor(title, imageUrl, categoryId) {
-            this.id = works.length
+        constructor(index, title, imageUrl, categoryId) {
+            this.id = index
             this.title = title
             this.imageUrl = imageUrl
             this.categoryId = categoryId
             this.userId = localStorage.getItem('userId')
         }
     }
-})}
+}
 ////// Requests
 async function requestWorks() {
     try {
@@ -260,7 +266,8 @@ async function requestDelete(i) {
         if(!req.ok) {
             throw new Error('login request failed')
         }
-        return await req.json()
+        resp = await req.json()    
+        return resp
     } catch (error) {
         console.error(error)
     }   
@@ -278,7 +285,8 @@ async function requestAddWork(newWork) {
         if(!req.ok) {
             throw new Error('login request failed')
         }
-        return await req.json()
+        resp = await req.json()    
+        return resp
     } catch (error) {
         console.error(error)
     }   
