@@ -101,7 +101,8 @@ function loadCats() {
             const catSelect = document.querySelector('#add_categorie')
             for(cat of categories) {
                 const categorie = document.createElement('option')
-                categorie.dataset.id = cat.id
+                categorie.value = cat.id
+                categorie.classList.add('modal_cat-option')
                 categorie.innerText = cat.name
                 catSelect.appendChild(categorie)
             }
@@ -173,7 +174,7 @@ function modalGalery() {
             for (deleteWork of deleteWorks) {
                 deleteWork.remove()
             }
-            // requestDelete(i)
+            requestDelete(works[i].id)
             works.splice(i, 1)
             modalInit()
         })
@@ -198,10 +199,12 @@ function modalClose() {
 function addWork() {
     const imgInput = document.querySelector('#add_image')
     const titleInput = document.querySelector('#add_titre')
-    const catInput = document.querySelector('#add_categorie')
+    // const catInputs = document.querySelectorAll('.modal_cat-option')
+    const catInputs = document.querySelector('#add_categorie')
     const formBtn = document.querySelector('.modal_add-confirm')
     const imagePreview = document.querySelector('.modal_add-img')
     let img
+    let catId = 1
     imgInput.addEventListener('change', () => {
         
         if(imgInput.files && imgInput.files[0]) {
@@ -220,23 +223,33 @@ function addWork() {
             }
         
         })
-    
+    catInputs.addEventListener('change', (event) => {
+        catId = event.target.value
+    })
+    // for(catInput of catInputs) {
+    //     console.log(catInput)
+    //     catInput.addEventListener('select', () => {
+    //         console.log(catInput.dataset.id)
+    //         catId = catInput.dataset.id
+    //     })
+    // }
     formBtn.addEventListener('click', (e) => {
         console.log('click')
         e.preventDefault()
-        const newWork = new Work(works.length, titleInput, img.src, catInput.dataset.id)
-        works.push(JSON.stringify(newWork))
+        const newWork = new Work(works.length, titleInput.value, img.src, JSON.stringify(catId))
         console.log(newWork)
-        requestAddWork(newWork)
+        works.push(JSON.stringify(newWork))
+        console.log(JSON.stringify(newWork))
+        requestAddWork(JSON.stringify(newWork))
         modalPage = 1
         modalInit()
     })
     class Work {
-        constructor(index, title, imageUrl, categoryId) {
+        constructor(index, title, imageUrl, catId) {
             this.id = index
             this.title = title
             this.imageUrl = imageUrl
-            this.categoryId = categoryId
+            this.categoryId = catId
             this.userId = localStorage.getItem('userId')
         }
     }
@@ -254,9 +267,9 @@ async function requestWorks() {
         console.error('error', error)
     } 
 }   
-async function requestDelete(i) {
+async function requestDelete(index) {
     try {
-        const req = await fetch(`http://localhost:5678/api/works/${works[i].id}`, {
+        const req = await fetch(`http://localhost:5678/api/works/{${index}}`, {
             method: 'delete',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem("token")}`,
@@ -266,7 +279,7 @@ async function requestDelete(i) {
         if(!req.ok) {
             throw new Error('login request failed')
         }
-        resp = await req.json()    
+        const resp = await req 
         return resp
     } catch (error) {
         console.error(error)
@@ -285,7 +298,7 @@ async function requestAddWork(newWork) {
         if(!req.ok) {
             throw new Error('login request failed')
         }
-        resp = await req.json()    
+        let resp = await req  
         return resp
     } catch (error) {
         console.error(error)
