@@ -12,7 +12,7 @@ if(localStorage.userId == 1){
     logInOut.innerHTML = 'logout'
     logInOut.addEventListener('click', () => {
         window.localStorage.clear()
-        // logInOut.innerHTML = ' <a href="./login.html">login</a>'
+        logInOut.innerHTML = ' <a href="./login.html">login</a>'
         modifier.innerHTML = ''
     })
     modifier.innerHTML = `
@@ -101,7 +101,7 @@ function loadCats() {
             const catSelect = document.querySelector('#add_categorie')
             for(cat of categories) {
                 const categorie = document.createElement('option')
-                categorie.value = cat.id
+                categorie.value = cat.id 
                 categorie.classList.add('modal_cat-option')
                 categorie.innerText = cat.name
                 catSelect.appendChild(categorie)
@@ -212,7 +212,6 @@ function addWork() {
             const reader = new FileReader()
             reader.addEventListener('load', () => {
                 img.src = reader.result
-                console.log(img.src)
                 imagePreview.innerHTML = 
                 `
                     <img class="preview_img" src="${img.src}" alt="image preview" >
@@ -234,23 +233,26 @@ function addWork() {
     //     })
     // }
     formBtn.addEventListener('click', (e) => {
-        console.log('click')
         e.preventDefault()
-        const newWork = new Work(works.length, titleInput.value, img.src, JSON.stringify(catId))
+        const newWork = new Work(
+            (works.length > 0 ? Math.max(...works.map(work => work.id)) + 1 : 0),
+            titleInput.value,
+            img.src,
+            catId
+            )
+        works.push(newWork)
         console.log(newWork)
-        works.push(JSON.stringify(newWork))
-        console.log(JSON.stringify(newWork))
-        requestAddWork(JSON.stringify(newWork))
+        requestAddWork(newWork)
         modalPage = 1
         modalInit()
     })
     class Work {
         constructor(index, title, imageUrl, catId) {
-            this.id = index
+            this.id = parseInt(index)
             this.title = title
             this.imageUrl = imageUrl
             this.categoryId = catId
-            this.userId = localStorage.getItem('userId')
+            this.userId = parseInt(localStorage.getItem('userId'))
         }
     }
 }
@@ -288,12 +290,12 @@ async function requestDelete(index) {
 async function requestAddWork(newWork) {
     try {
         const req = await fetch(`'http://localhost:5678/api/works'`, {
-            method: 'post',
+            method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem("token")}`,
                 'content-type': 'application/json'
             },
-            body: JSON.stringify({newWork})
+            body: JSON.stringify(newWork)
         })
         if(!req.ok) {
             throw new Error('login request failed')
