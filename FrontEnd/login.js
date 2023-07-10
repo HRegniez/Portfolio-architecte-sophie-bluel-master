@@ -2,6 +2,7 @@ const mailInput = document.querySelector('#mail')
 const passwordInput = document.querySelector('#password')
 const form = document.querySelector('#form')
 const logInOut = document.querySelector('#login')  
+const errorMessage = document.createElement('p')
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault()
@@ -12,12 +13,13 @@ form.addEventListener('submit', async (e) => {
 
 async function checkLogin(response) {
     if(response === undefined){
-        const errorMessage = document.createElement('p')
+        const formWrap = document.querySelector('.form-wrap')
+        errorMessage.innerHTML = ''
         errorMessage.innerHTML = `
             Erreur dans l’identifiant ou le mot de passe
         `
         errorMessage.classList.add('login_error')
-        form.appendChild(errorMessage)
+        formWrap.appendChild(errorMessage)
     }else{
         window.localStorage.setItem("userId", response.userId)
         window.localStorage.setItem("token", response.token)

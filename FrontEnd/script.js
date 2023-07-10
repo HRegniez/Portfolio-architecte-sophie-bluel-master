@@ -14,7 +14,6 @@ async function loadPage(works, gallery, categoryIndex) {            // Load main
     if(categoryIndex.value === 0) {
         for (work of works) {
             const fig = document.createElement('figure')
-            // Sur ta figure, tu dois lui ajouter un data-id avec l'id de l'image (work.id)
             fig.dataset.id = work.id
             fig.innerHTML = 
                 `
@@ -49,14 +48,21 @@ async function loadCategories(works, gallery, categoryIndex) {
         navFilters.appendChild(filtersContain)
         for (const categorie of categories) {
             const filter = document.createElement('li')
+            if(categoryIndex.value === categorie.id) {
+                filter.classList.add('filter-selected')
+            }else{
+                filter.className='filter'
+            }
             filter.innerHTML = 
             `
-                <a class="filter" data-set="${categorie.id}"> ${categorie.name} </a>
+                <a data-set="${categorie.id}"> ${categorie.name} </a>
             `
             filtersContain.appendChild(filter)
-            filter.addEventListener('click', e => {
-                categoryIndex.value = categorie.id
+            filter.addEventListener('click', () => {
+                categoryIndex.value = categorie.id  // need to
+                filtersContain.remove()
                 loadPage(works, gallery, categoryIndex)
+                loadCategories(works, gallery, categoryIndex)
             })    
     }}else{
         navFilters.innerHTML = ''
