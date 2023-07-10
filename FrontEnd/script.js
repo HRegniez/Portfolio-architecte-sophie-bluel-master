@@ -59,7 +59,7 @@ async function loadCategories(works, gallery, categoryIndex) {
             `
             filtersContain.appendChild(filter)
             filter.addEventListener('click', () => {
-                categoryIndex.value = categorie.id  // need to
+                categoryIndex.value = categorie.id  
                 filtersContain.remove()
                 loadPage(works, gallery, categoryIndex)
                 loadCategories(works, gallery, categoryIndex)

@@ -24,10 +24,7 @@ if(localStorage.userId == 1){
         categories = await requestCategories()
         modalInit()  
     }) 
-} // else{
-//     logInOut.innerHTML = ' <a href="./login.html">login</a>'
-    
-// }
+}
 
 async function modalInit() {
     modalInitContent()
@@ -194,19 +191,27 @@ function modalClose() {
     modal.classList.remove('modal')
     modal.innerHTML = ''    
 }
+function dataURLtoBlob(dataURL) {
+    const arr = dataURL.split(',')
+    const mime = arr[0].match(/:(.*?);/)[1]
+    const bstr = atob(arr[1])
+    let n = bstr.length
+    const u8arr = new Uint8Array(n)
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new Blob([u8arr], { type: mime })
+}
 function addWork() {
     const imgInput = document.querySelector('#add_image')
     const titleInput = document.querySelector('#add_titre')
-    // const catInputs = document.querySelectorAll('.modal_cat-option')
     const catInputs = document.querySelector('#add_categorie')
     const formBtn = document.querySelector('.modal_add-confirm')
     const imagePreview = document.querySelector('.modal_add-img')
-
     let imgData
     let img
     let catId = 1
-    imgInput.addEventListener('change', () => {
-        
+    imgInput.addEventListener('change', () => {        
         if(imgInput.files && imgInput.files[0]) {
             if (imgInput.size > 4 * 1024 * 1024) {
                 alert('La taille de la photo est trop importante (limite : 4 Mo).');
@@ -215,8 +220,9 @@ function addWork() {
                 const reader = new FileReader()
                 reader.addEventListener('load', (e) => {
                     img.src = reader.result
-                    const arrayBuffer = e.target.result
-                    imgData = new Blob([arrayBuffer], { type: imgInput.files[0].type } ) 
+                    
+                    imgData = URL.createObjectURL(dataURLtoBlob(reader.result))
+                    console.log(imgData)
                     imagePreview.innerHTML = 
                     `
                         <img class="preview_img" src="${img.src}" alt="image preview" >
@@ -228,9 +234,7 @@ function addWork() {
     })
     catInputs.addEventListener('change', (event) => {
         catId = event.target.value
-    })
-
-    
+    }) 
     formBtn.addEventListener('click', (e) => {
         e.preventDefault()        
         const newWork = new Work
@@ -253,6 +257,7 @@ function addWork() {
         }
     }
 }
+
 ////// Requests
 async function requestWorks() {
     try {
