@@ -22,7 +22,6 @@ if(localStorage.userId == 1){
     modifier.addEventListener('click', async () => {      // modal launch event listener 
         works = await requestWorks()
         categories = await requestCategories()
-        console.log(categories)
         modalInit()  
     }) 
 } // else{
@@ -154,7 +153,6 @@ function modalBack() {
 }
             //////// Works in gallery options ( zoom-icon/delete/edit )
 function modalGalery() {
-    console.log()
     const modalFigures = document.querySelectorAll('.modal_figure')
     const modalImgs = document.querySelectorAll('.modal_img')
     const zoomIcons = document.querySelectorAll('.fa-arrows-up-down-left-right')
@@ -203,56 +201,55 @@ function addWork() {
     const catInputs = document.querySelector('#add_categorie')
     const formBtn = document.querySelector('.modal_add-confirm')
     const imagePreview = document.querySelector('.modal_add-img')
+
+    let imgData
     let img
     let catId = 1
     imgInput.addEventListener('change', () => {
         
         if(imgInput.files && imgInput.files[0]) {
-            img = new Image()
-            const reader = new FileReader()
-            reader.addEventListener('load', () => {
-                img.src = reader.result
-                imagePreview.innerHTML = 
-                `
-                    <img class="preview_img" src="${img.src}" alt="image preview" >
-                `
-
-            })
-            reader.readAsDataURL(imgInput.files[0])
+            if (imgInput.size > 4 * 1024 * 1024) {
+                alert('La taille de la photo est trop importante (limite : 4 Mo).');
+            } else {
+                img = new Image()
+                const reader = new FileReader()
+                reader.addEventListener('load', (e) => {
+                    img.src = reader.result
+                    const arrayBuffer = e.target.result
+                    imgData = new Blob([arrayBuffer], { type: imgInput.files[0].type } ) 
+                    imagePreview.innerHTML = 
+                    `
+                        <img class="preview_img" src="${img.src}" alt="image preview" >
+                    `
+                })
+                reader.readAsDataURL(imgInput.files[0])
             }
-        
-        })
+        }   
+    })
     catInputs.addEventListener('change', (event) => {
         catId = event.target.value
     })
-    // for(catInput of catInputs) {
-    //     console.log(catInput)
-    //     catInput.addEventListener('select', () => {
-    //         console.log(catInput.dataset.id)
-    //         catId = catInput.dataset.id
-    //     })
-    // }
+
+    
     formBtn.addEventListener('click', (e) => {
-        e.preventDefault()
-        const newWork = new Work(
-            (works.length > 0 ? Math.max(...works.map(work => work.id)) + 1 : 0),
+        e.preventDefault()        
+        const newWork = new Work
+            (
+            imgData,
             titleInput.value,
-            img.src,
             catId
             )
+        console.log(JSON.stringify(newWork))
         works.push(newWork)
-        console.log(newWork)
         requestAddWork(newWork)
         modalPage = 1
         modalInit()
     })
     class Work {
-        constructor(index, title, imageUrl, catId) {
-            this.id = parseInt(index)
+        constructor(imgSrc, title, catId) {
+            this.image = imgSrc
             this.title = title
-            this.imageUrl = imageUrl
-            this.categoryId = catId
-            this.userId = parseInt(localStorage.getItem('userId'))
+            this.category = parseInt(catId)
         }
     }
 }
@@ -289,7 +286,7 @@ async function requestDelete(index) {
 }
 async function requestAddWork(newWork) {
     try {
-        const req = await fetch(`'http://localhost:5678/api/works'`, {
+        const req = await fetch('http://localhost:5678/api/works', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem("token")}`,
