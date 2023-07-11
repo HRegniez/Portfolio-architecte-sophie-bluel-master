@@ -1,3 +1,4 @@
+
 init()
 
 async function init() {
@@ -6,7 +7,7 @@ async function init() {
     const categoryIndex = { value: 0 }
     loadPage(works, gallery, categoryIndex)
     loadCategories(works, gallery, categoryIndex)
-    logOut()
+    logOut(works, gallery, categoryIndex)
 }
 
 async function loadPage(works, gallery, categoryIndex) {            // Load main page content
@@ -69,12 +70,12 @@ async function loadCategories(works, gallery, categoryIndex) {
     }
 }
 
-function logOut() {
+function logOut(works, gallery, categoryIndex) {
     const btn = document.querySelector('#login')
     btn.addEventListener('click', () => {
         window.localStorage.clear()
         btn.innerHTML = ' <a href="./login.html">login</a>'
-        loadCategories()
+        loadCategories(works, gallery, categoryIndex)
     })
 }
 ///////////////////////////////////////// Requests
