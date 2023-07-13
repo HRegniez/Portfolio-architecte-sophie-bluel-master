@@ -6,6 +6,7 @@ let imgData = ''
 let works
 let modalPage = 1
 let categories
+let imgInputFile = ''
                                         // Is logged in ?
 
 if(localStorage.userId == 1){
@@ -37,6 +38,7 @@ async function modalInit() {
         modalExt()
         modalBack()
         imagePreview()
+        checkInputToActivateBtn()
         addWork()
     }         
 }
@@ -85,7 +87,7 @@ function modalInitContent() {
                             <img src="./assets/icons/arrow-down.svg" >
                         </div>
                     </fieldset>
-                    <button class="modal_add-confirm">Confirmer</button> 
+                    <button class="modal_add-confirm disabled">Confirmer</button> 
                 </div>
             </div>
         `
@@ -96,6 +98,7 @@ function modalInitContent() {
 }
 function loadCats() {
             const catSelect = document.querySelector('#add_categorie')
+            categories.unshift({id: 0, name: ' '})
             for(cat of categories) {
                 const categorie = document.createElement('option')
                 categorie.value = cat.id 
@@ -170,10 +173,8 @@ function modalGalery() {
             for (deleteWork of deleteWorks) {
                 deleteWork.remove()
             }
-            console.log(works[i].id)
             requestDelete(works[i].id)
             works.splice(i, 1)
-            console.log(works)
             modalInit()
         })
                 // edit function
@@ -200,13 +201,11 @@ function addWork() {
     button.addEventListener('click', async () => {
         const title = document.querySelector('#add_titre')
         const category = document.querySelector('#add_categorie')
-        const imgInput = document.querySelector('#add_image')
-
         const newWork = new FormData();
         newWork.append('title', title.value);
         newWork.append('category', category.value);
-        if(imgInput.files[0]){
-            newWork.append('image', imgInput.files[0]);
+        if(!imgInputFile == ''){
+            newWork.append('image', imgInputFile);
         }
         const req = await fetch('http://localhost:5678/api/works', {
             method: 'POST',
@@ -217,31 +216,62 @@ function addWork() {
             body: newWork
         })
         const resp = await req.json() // use .json() method to get response as json 
-        // Avec la response, tu l'ajoutes directement à ta liste sur la modale et sur la page 
+        reloadPage(resp)        
     })
+}
+function reloadPage (resp) {
+    works.push(resp)
+    const gallery = document.querySelector('.gallery')
+    const fig = document.createElement('figure')
+    fig.dataset.id = resp.id
+    fig.innerHTML = 
+        `
+        <img src="${resp.imageUrl}" alt="${resp.title}">
+        <figcaption>${resp.title}</figcaption>
+        `
+    gallery.appendChild(fig)
+    modalPage = 1
+    modalInit()
 }
 function imagePreview() {
     const imgInput = document.querySelector('#add_image')
     imgInput.addEventListener('change', () => {
         if(imgInput.files[0]){
-        
-        img = new Image()
-        const reader = new FileReader()
-        reader.addEventListener('load', () => {
-            console.log('1')
-            img.src = reader.result
-            console.log(imgData)
-            document.querySelector('.modal_add-img').innerHTML = 
-            `
-                <img class="preview_img" src="${img.src}" alt="image preview" >
-            `
+            imgInputFile = imgInput.files[0]
+            let img = new Image()
+            const reader = new FileReader()
+            reader.addEventListener('load', () => {
+                img.src = reader.result
+                document.querySelector('.modal_add-img').innerHTML = 
+                `
+                    <img class="preview_img" src="${img.src}" alt="image preview" >
+                `
             })    
             reader.readAsDataURL(imgInput.files[0])
         }
     })  
 }
 
-
+function checkInputToActivateBtn() {
+    const datas = []
+    const title = document.querySelector('#add_titre')
+    const category = document.querySelector('#add_categorie')
+    const imgInput = document.querySelector('#add_image')
+    datas.push(title, category, imgInput)
+    let modalCheck = 0
+    for(data of datas) {
+        data.addEventListener('change', () => {
+            modalCheck += 1
+            if(modalCheck === 3) {
+            document.querySelector('.modal_add-confirm').disabled = false
+            document.querySelector('.modal_add-confirm').classList.toggle('disabled')
+            }else {
+                document.querySelector('.modal_add-confirm').disabled = true
+            }
+        })
+    }
+    
+}
 
 ////// Requests
 async function requestWorks() {
@@ -281,7 +311,6 @@ async function requestCategories() {
             throw new Error('categories request failed')
         }
         const categories = await response.json()
-        console.log(categories)
         return categories
     } catch (error) {
         console.error('error', error)

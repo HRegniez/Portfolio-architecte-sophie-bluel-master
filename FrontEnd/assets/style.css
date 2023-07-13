@@ -249,6 +249,7 @@ input[type="submit"]{
 	background-color: #1D6154;
 	margin : 2em auto ;
 	width: 180px;
+	height: 2rem;
 	text-align: center;
 	border-radius: 60px;
 }
@@ -348,6 +349,7 @@ footer nav ul {
 }
 .modal_add {
 	cursor: pointer;
+	border: none;
 }
 .modal_add-img {
 	width: 70%;
@@ -437,7 +439,15 @@ footer nav ul {
 	background-color: #1D6154;
 	margin : 2em auto ;
 	width: 180px;
+	height: 2rem;
 	text-align: center;
 	border-radius: 60px;
 	cursor: pointer;
+}
+.disabled {
+	background-color: #A7A7A7;
+	cursor: default;
+	border-color: #A7A7A7;
+	outline: inherit;
+	border: none;
 }
