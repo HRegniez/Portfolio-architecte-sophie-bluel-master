@@ -162,10 +162,19 @@ li:hover {
 #portfolio .edit {
 	margin-right: 0.5rem;
 }
+#introduction .edit {
+	margin-right: 0.5rem;
+}
 #modifier {
 	font-size: 15px;
-	margin-left: 1.5rem;
 	cursor: pointer;
+	display: flex;
+}
+.modifier_profile {
+	margin: 0.5rem 10%;
+}
+.modifier_modal {
+	margin-left: 1.5rem;
 }
 .gallery {
 	width: 100%;

@@ -1,5 +1,5 @@
 const logInOut = document.querySelector('#login')
-const modifier = document.getElementById('modifier')
+const modifiers = document.querySelectorAll('#modifier')
 const modal = document.createElement('div')
 const modalParent = document.getElementById('portfolio')
 let imgData = ''
@@ -16,15 +16,19 @@ if(localStorage.userId == 1){
         logInOut.innerHTML = ' <a href="./login.html">login</a>'
         modifier.innerHTML = ''
     })
-    modifier.innerHTML = `
-    <i class="fa-regular fa-pen-to-square edit"></i>
-    <p>modifier<p>
-    `
-    modifier.addEventListener('click', async () => {      // modal launch event listener 
-        works = await requestWorks()
-        categories = await requestCategories()
-        modalInit()  
-    }) 
+    for(modifier of modifiers) {
+        modifier.innerHTML = `
+        <i class="fa-regular fa-pen-to-square edit"></i>
+        <p>modifier<p>
+        `
+            
+    }
+    modifiers[1].addEventListener('click', async () => {      // modal launch event listener 
+            works = await requestWorks()
+            categories = await requestCategories()
+             modalInit()  
+        }) 
+   
 }
 
 async function modalInit() {
