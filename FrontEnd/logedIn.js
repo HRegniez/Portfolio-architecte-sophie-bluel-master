@@ -14,7 +14,8 @@ if(localStorage.userId == 1){
     logInOut.addEventListener('click', () => {
         window.localStorage.clear()
         logInOut.innerHTML = ' <a href="./login.html">login</a>'
-        modifier.innerHTML = ''
+        modifiers[0].innerHTML = ''
+        modifiers[1].innerHTML = ''
     })
     for(modifier of modifiers) {
         modifier.innerHTML = `
