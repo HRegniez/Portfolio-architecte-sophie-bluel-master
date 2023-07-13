@@ -36,41 +36,8 @@ async function modalInit() {
     }else if(modalPage == 2){
         modalExt()
         modalBack()
-        // addWork()
-        // Au click on lance la fonction d'ajout
-        const buttonSubmit = document.querySelector('.modal_add-confirm')
-        buttonSubmit.addEventListener('click', requestAddWork)
-
-        const imgInput = document.querySelector('#add_image')
-
-        imgInput.addEventListener('change', () => {        
-                    if(imgInput.files) {
-                        if (imgInput.size > 4 * 1024 * 1024) {
-                            alert('La taille de la photo est trop importante (limite : 4 Mo).');
-                        } else {
-                            const imagePreview = document.querySelector('.modal_add-img')
-                            img = new Image()
-                            const reader = new FileReader()
-                            
-                            reader.addEventListener('load', () => {
-                                
-                                img.src = reader.result
-                                
-                                // imgData = URL.createObjectURL(dataURLtoBlob(reader.result)) ///////// Is that the right format (binary string) ?
-                                console.log('loaded')
-                                imagePreview.innerHTML = 
-                                `
-                                    <img class="preview_img" src="${img.src}" alt="image preview" >
-                                `
-                                imgData = img.src
-                            })
-                            
-                            reader.readAsDataURL(imgInput.files[0])
-                            
-                        }
-                    }   
-                })
-        
+        imagePreview()
+        addWork()
     }         
 }
 function modalInitContent() {
@@ -227,90 +194,52 @@ function modalClose() {
     modal.classList.remove('modal')
     modal.innerHTML = ''    
 }
-// function dataURLtoBlob(dataURL) {
-//     const arr = dataURL.split(',')
-//     const mime = arr[0].match(/:(.*?);/)[1]
-//     const bstr = atob(arr[1])
-//     let n = bstr.length
-//     const u8arr = new Uint8Array(n)
-//     while (n--) {
-//       u8arr[n] = bstr.charCodeAt(n)
-//     }
-//     return new Blob([u8arr], { type: mime })
-// }
-// function addWork() {
-//     const imgInput = document.querySelector('#add_image')
-//     const titleInput = document.querySelector('#add_titre')
-//     const catInputs = document.querySelector('#add_categorie')
-//     const formBtn = document.querySelector('.modal_add-confirm')
-//     const imagePreview = document.querySelector('.modal_add-img')
-//     let imgData
-//     let img
-//     let catId = 1
-//     imgInput.addEventListener('change', () => {        
-//         if(imgInput.files && imgInput.files[0]) {
-//             if (imgInput.size > 4 * 1024 * 1024) {
-//                 alert('La taille de la photo est trop importante (limite : 4 Mo).');
-//             } else {
-//                 img = new Image()
-//                 const reader = new FileReader()
-//                 reader.addEventListener('load', () => {
-//                     img.src = reader.result
-                    
-//                     // imgData = URL.createObjectURL(dataURLtoBlob(reader.result)) ///////// Is that the right format (binary string) ?
-//                     console.log(imgData)
-//                     imagePreview.innerHTML = 
-//                     `
-//                         <img class="preview_img" src="${img.src}" alt="image preview" >
-//                     `
-//                 })
-//                 imgData = reader.readAsDataURL(imgInput.files[0])
+function addWork() {
+    // Get all datas
+    const button = document.querySelector('.modal_add-confirm')
+    button.addEventListener('click', async () => {
+        const title = document.querySelector('#add_titre')
+        const category = document.querySelector('#add_categorie')
+        const imgInput = document.querySelector('#add_image')
 
-//                 reader.readAsDataURL(imgInput.files[0])
-//             }
-//         }   
-//     })
-//     catInputs.addEventListener('change', (event) => {
-//         catId = event.target.value
-//     }) 
-//     formBtn.addEventListener('click', (e) => {
-//         e.preventDefault()        
-//         const newWork = new Work
-//             (
-//             imgData,
-//             titleInput.value,
-//             catId
-//             )
-//         // console.log(JSON.stringify(newWork))
-//         // works.push({    /////////////////////////inject new work to modal   ////// ??? dataId is not in corelation with the API (to delete the newly added work)
-//         //     category: {id: catId, name: ""},
-//         //     categoryId: catId,
-//         //     id: "",
-//         //     imageUrl: img.src,
-//         //     title: titleInput.value,
-//         //     userId: localStorage.getItem('id')
-//         // })
-//         // const fig = document.createElement("figure") //////////////////// ???? same here ++ the works array used for the gallery imgs are in the other srcipt
-//         //     fig.innerHTML = 
-//         //         `
-//         //         <img src="${img.src}" alt="${titleInput.value}">
-//         //         <figcaption>${titleInput.value}</figcaption>
-//         //         `
-//         // const gallery = document.querySelector('.gallery')
-//         // gallery.appendChild(fig)
-
-//         requestAddWork(newWork)
-//         modalPage = 1
-//         modalInit()
-//     })
-//     class Work {
-//         constructor(imgSrc, title, catId) {
-//             this.image = imgSrc
-//             this.title = title
-//             this.category = parseInt(catId)
-//         }
-//     }
-// }
+        const newWork = new FormData();
+        newWork.append('title', title.value);
+        newWork.append('category', category.value);
+        if(imgInput.files[0]){
+            newWork.append('image', imgInput.files[0]);
+        }
+        const req = await fetch('http://localhost:5678/api/works', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+                // content-type is automatically set to multipart/form-data when using FormData
+            },
+            body: newWork
+        })
+        const resp = await req.json() // use .json() method to get response as json 
+        // Avec la response, tu l'ajoutes directement à ta liste sur la modale et sur la page 
+    })
+}
+function imagePreview() {
+    const imgInput = document.querySelector('#add_image')
+    imgInput.addEventListener('change', () => {
+        if(imgInput.files[0]){
+        
+        img = new Image()
+        const reader = new FileReader()
+        reader.addEventListener('load', () => {
+            console.log('1')
+            img.src = reader.result
+            console.log(imgData)
+            document.querySelector('.modal_add-img').innerHTML = 
+            `
+                <img class="preview_img" src="${img.src}" alt="image preview" >
+            `
+            })    
+            reader.readAsDataURL(imgInput.files[0])
+        }
+    })  
+}
 
 
 
@@ -322,7 +251,6 @@ async function requestWorks() {
             throw new Error('works request failed')
         }
         works = await response.json()
-        console.log(works)
         return works
     } catch (error) {
         console.error('error', error)
@@ -341,42 +269,6 @@ async function requestDelete(index) {
             throw new Error('login request failed')
         }
         const resp = await req 
-        console.log(resp)
-        return resp
-    } catch (error) {
-        console.error(error)
-    }   
-}
-async function requestAddWork(datas) {
-    // Get all datas
-    const title = document.querySelector('#add_titre')
-    const category = document.querySelector('#add_categorie')
-    // const imgInput = document.querySelector('#add_image')
-
-    // On lance le fileReader pour l'image
-    // const reader = new FileReader()
-    // const image = reader.readAsDataURL(imgInput.files[0])
-
-    const newWork = {
-        title: title.value,
-        category: category.value,
-        image: imgData
-    }
-
-    try {
-        const req = await fetch('http://localhost:5678/api/works', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem("token")}`,
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify(newWork)
-        })
-        if(!req.ok) {
-            throw new Error('login request failed')
-        }
-        let resp = await req 
-        console.log(resp) 
         return resp
     } catch (error) {
         console.error(error)
