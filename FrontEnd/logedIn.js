@@ -2,10 +2,9 @@ const logInOut = document.querySelector('#login')
 const modifiers = document.querySelectorAll('#modifier')
 const modal = document.createElement('div')
 const modalParent = document.getElementById('portfolio')
-let imgData = ''
 let works
-let modalPage = 1
 let categories
+let modalPage = 1
 let imgInputFile = ''
                                         // Is logged in ?
 
@@ -24,11 +23,12 @@ if(localStorage.userId == 1){
         `
             
     }
-    modifiers[1].addEventListener('click', async () => {      // modal launch event listener 
-            works = await requestWorks()
-            categories = await requestCategories()
-             modalInit()  
-        }) 
+                                        // modal launch event listener
+    modifiers[1].addEventListener('click', async () => {       
+        works = await requestWorks()
+        categories = await requestCategories()
+         modalInit()  
+    }) 
    
 }
 
@@ -50,8 +50,8 @@ async function modalInit() {
 function modalInitContent() {
     modal.innerHTML = ''
     modal.classList = ''
+    modal.classList.add('modal')
     if(modalPage === 1){
-        modal.classList.add('modal')
         modal.innerHTML = 
         `
             <div class="modal_contain">
@@ -66,7 +66,6 @@ function modalInitContent() {
         `
     modalParent.appendChild(modal)
     }else if(modalPage === 2) {
-        modal.classList.add('modal')
         modal.innerHTML = 
         `
             <div class="modal_contain">
@@ -99,7 +98,6 @@ function modalInitContent() {
         loadCats()
         modalParent.appendChild(modal)
     }
-    
 }
 function loadCats() {
             const catSelect = document.querySelector('#add_categorie')
@@ -127,8 +125,7 @@ function injectWorks() {
             <p class="modal_edit">éditer</p>
         `
         gallery.appendChild(fig)    
-    }
-    
+    }   
 }  
             //////// close modal
 function modalExt() {
@@ -149,6 +146,10 @@ function modalExt() {
         modalPage = 1
     }
 }
+function modalClose() {
+    modal.classList.remove('modal')
+    modal.innerHTML = ''    
+}
 function modalBack() {
     const backBtn = document.querySelector('.modal_goback')
     backBtn.addEventListener('click', (e) => {
@@ -163,7 +164,6 @@ function modalGalery() {
     const modalImgs = document.querySelectorAll('.modal_img')
     const zoomIcons = document.querySelectorAll('.fa-arrows-up-down-left-right')
     const deleteBtns = document.querySelectorAll('.modal_delete')
-    const editBtns = document.querySelectorAll('.modal_edit')
                 // zoom_on icon on hover
     for ( let i = 0; i < modalFigures.length; i++) {
         modalImgs[i].addEventListener('mouseover', e => {
@@ -182,10 +182,6 @@ function modalGalery() {
             works.splice(i, 1)
             modalInit()
         })
-                // edit function
-        editBtns[i].addEventListener('click', () => {
-            return
-        })
     }
             ///////// Add works button
     const modalAdd = document.querySelector('.modal_add')
@@ -195,11 +191,6 @@ function modalGalery() {
     })
 }
 
-////// ?? need to do the delete all option ??
-function modalClose() {
-    modal.classList.remove('modal')
-    modal.innerHTML = ''    
-}
 function addWork() {
     // Get all datas
     const button = document.querySelector('.modal_add-confirm')
@@ -216,11 +207,10 @@ function addWork() {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem("token")}`
-                // content-type is automatically set to multipart/form-data when using FormData
             },
             body: newWork
         })
-        const resp = await req.json() // use .json() method to get response as json 
+        const resp = await req.json()
         reloadPage(resp)        
     })
 }
@@ -274,8 +264,7 @@ function checkInputToActivateBtn() {
                 document.querySelector('.modal_add-confirm').disabled = true
             }
         })
-    }
-    
+    }   
 }
 
 ////// Requests
