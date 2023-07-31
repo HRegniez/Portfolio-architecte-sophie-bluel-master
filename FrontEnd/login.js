@@ -23,7 +23,7 @@ async function checkLogin(response) {
     }else{
         window.localStorage.setItem("userId", response.userId)
         window.localStorage.setItem("token", response.token)
-        console.log(localStorage)
+
         window.location.href = "./index.html"
     }
 }

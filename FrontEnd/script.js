@@ -2,10 +2,10 @@
 init()
 
 async function init() {
-    const works = await requestWorks()
+    const works = await requestWorks()                             
     const gallery = document.querySelector('.gallery')
     const categoryIndex = { value: 0 }
-    loadPage(works, gallery, categoryIndex)
+    loadPage(works, gallery, categoryIndex)                        
     loadCategories(works, gallery, categoryIndex)
     logOut(works, gallery, categoryIndex)
 }

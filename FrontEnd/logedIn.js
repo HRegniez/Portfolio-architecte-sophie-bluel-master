@@ -7,21 +7,22 @@ let categories
 let modalPage = 1
 let imgInputFile = ''
                                         // Is logged in ?
-
 if(localStorage.userId == 1){
     logInOut.innerHTML = 'logout'
+    const topModifier = document.querySelector('#top_modifier')
     logInOut.addEventListener('click', () => {
         window.localStorage.clear()
         logInOut.innerHTML = ' <a href="./login.html">login</a>'
         modifiers[0].innerHTML = ''
         modifiers[1].innerHTML = ''
+        topModifier.classList.add('hidden')
+        topModifier.classList.remove('top_modifier')
     })
     for(modifier of modifiers) {
         modifier.innerHTML = `
         <i class="fa-regular fa-pen-to-square edit"></i>
         <p>modifier<p>
-        `
-            
+        `        
     }
                                         // modal launch event listener
     modifiers[1].addEventListener('click', async () => {       
@@ -29,7 +30,8 @@ if(localStorage.userId == 1){
         categories = await requestCategories()
          modalInit()  
     }) 
-   
+    topModifier.classList.add('top_modifier')
+    topModifier.classList.remove('hidden')
 }
 
 async function modalInit() {
